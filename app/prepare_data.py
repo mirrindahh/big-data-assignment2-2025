@@ -1,6 +1,7 @@
 from pathvalidate import sanitize_filename
 from tqdm import tqdm
 from pyspark.sql import SparkSession
+from pyspark.sql import Row
 
 
 spark = SparkSession.builder \
@@ -20,8 +21,9 @@ def create_doc(row):
     with open(filename, "w") as f:
         f.write(row['text'])
 
+def clean_doc(row):
+    return Row(id=row['id'], title=row['title'].replace('\n', ' ').replace('\t', ' '), text=row['text'].replace('\n', ' ').replace('\t', ' '))
 
-df.foreach(create_doc)
-
-
-# df.write.csv("/index/data", sep = "\t")
+df2 = df.rdd.map(clean_doc)
+df2.foreach(create_doc)
+df2.toDF().write.csv("/index/data", sep = "\t")

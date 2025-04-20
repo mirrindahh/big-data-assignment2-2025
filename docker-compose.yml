@@ -26,6 +26,8 @@ services:
   cluster-slave-1:
     image: firasj/spark-docker-cluster
     container_name: cluster-slave-1
+    ports:
+      - "8042:8042"
     networks:
       - spark-cluster
     hostname: cluster-slave-1
@@ -44,6 +46,7 @@ services:
     container_name: cassandra-server
     ports:
       - "7000:7000"
+      - "9042:9042"
     networks:
       - spark-cluster
     
